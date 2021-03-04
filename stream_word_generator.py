@@ -15,7 +15,7 @@ FILENAME = "kinglear.txt"
 
 def create_client():
     credentials = GoogleCredentials.get_application_default()
-    if credentials.create_scope_required():
+    if credentials.create_scoped_required():
         credentials = credentials.create_scoped(PUBSUB_SCOPES)
     return discovery.build("pubsub", "v1beta2", credentials=credentials)
 
@@ -46,7 +46,7 @@ def start_stream():
     print("publishing all the read lines.")
     try:
         for line in file_lines:
-            publish(client, WORD_STREAM_TOPIC, line, {"timestamp": datetime.datetime.now()})
+            publish(client, WORD_STREAM_TOPIC, line, {"timestamp": str(datetime.datetime.now())})
     except Exception as e:
         print("Exception raised: {}".format(e))
 
