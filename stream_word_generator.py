@@ -44,7 +44,7 @@ def start_stream():
         while True:
             for line in file_lines:
                 print("sending text to pubsub.")
-                publish(client, WORD_STREAM_TOPIC, line.encode("utf-8"), {"timestamp": str(datetime.datetime.now()).encode("utf-8")})
+                publish(client, WORD_STREAM_TOPIC, line.encode("utf-8"), {"timestamp": str(datetime.datetime.now())})
     except Exception as e:
         print("Exception raised: {}".format(e))
 
