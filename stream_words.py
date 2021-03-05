@@ -42,7 +42,7 @@ def run(argv=None, save_main_session=True):
 
         def format_result(word_count):
             (word, count) = word_count
-            return '%s: %d' % (word, str(count))
+            return '%s: %d' % (word, count)
 
         messages = (
             p| beam.io.ReadFromPubSub(
@@ -69,7 +69,7 @@ def run(argv=None, save_main_session=True):
             table="stream_word_table",
             dataset="stream_word_dataset",
             project="playground-s-11-691e528b",
-            schema="word:string,count_total:numeric",
+            schema="word:string,count_total:integer",
             create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
             write_disposition=BigQueryDisposition.WRITE_APPEND
         )
