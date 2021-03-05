@@ -1,10 +1,5 @@
-
-from __future__ import absolute_import
-
 import argparse
 import logging
-
-from past.builtins import unicode
 
 import apache_beam as beam
 import apache_beam.transforms.window as window
@@ -26,11 +21,11 @@ def run(argv=None, save_main_session=True):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--bq_table',
-        default="playground-s-11-080770db:stream_word_count_1_dataset.stream_word_count_1_table",
+        default="playground-s-11-691e528b:stream_word_dataset.stream_word_table",
         help=('Output to big query table.'))
     parser.add_argument(
         '--input_topic',
-        default="projects/playground-s-11-080770db/topics/word_ingest",
+        default="projects/playground-s-11-691e528b/topics/word_ingest",
         help=(
             'Input PubSub topic of the form '
             '"projects/<PROJECT>/topics/<TOPIC>".'))
@@ -57,7 +52,7 @@ def run(argv=None, save_main_session=True):
 
         counts = (
             lines
-            | 'split' >> (beam.ParDo(WordExtractingDoFn()).with_output_types(unicode))
+            | 'split' >> (beam.ParDo(WordExtractingDoFn()))
             | 'pair_with_one' >> beam.Map(lambda x: (x, 1))
             | 'window for 15 minutes' >> beam.WindowInto(window.FixedWindows(15, 0))
             | 'group' >> beam.GroupByKey()
