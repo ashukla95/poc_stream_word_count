@@ -13,7 +13,7 @@ def start_stream():
 
     PROJECT_ID = "playground-s-11-691e528b"
     TOPIC_ID = "word_ingest"
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="key.json"
+    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="key.json"
     FILE_NAME = "kinglear.txt"
     # topic = input("Please provide a topic to continue: ")
     publisher_options = pubsub_v1.types.PublisherOptions(enable_message_ordering=True)
