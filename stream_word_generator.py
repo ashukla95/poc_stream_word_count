@@ -1,8 +1,5 @@
 import base64
-import random
 import datetime
-import sys
-import time
 
 from apiclient import discovery
 from dateutil.parser import parse
@@ -45,14 +42,12 @@ def start_stream():
     print("File read complete. Length: {}".format(len(file_lines)))
     print("publishing all the read lines.")
     try:
-        for line in file_lines:
-            publish(client, WORD_STREAM_TOPIC, line, {"timestamp": str(datetime.datetime.now())})
+        while True:
+            for line in file_lines:
+                print("sending text to pubsub.")
+                publish(client, WORD_STREAM_TOPIC, line, {"timestamp": str(datetime.datetime.now())})
     except Exception as e:
         print("Exception raised: {}".format(e))
-
-
-
-    return
 
 if __name__ == "__main__":
     print("starting the word stream.")
