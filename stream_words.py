@@ -64,11 +64,11 @@ def run(argv=None, save_main_session=True):
             | 'format' >> beam.Map(format_result)
         )
 
-        output | beam.io.gcp.bigquery.WriteToBigQuery(
+        output|beam.Map(lambda x, y: {"word": x, "count_total": y})|beam.io.gcp.bigquery.WriteToBigQuery(
             table="stream_word_table",
             dataset="stream_word_dataset",
             project="playground-s-11-691e528b",
-            schema="word:string,count:string",
+            schema="word:string,count_total:string",
             create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
             write_disposition=BigQueryDisposition.WRITE_APPEND
         )
