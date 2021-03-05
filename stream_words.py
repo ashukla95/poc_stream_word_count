@@ -42,7 +42,7 @@ def run(argv=None, save_main_session=True):
 
         def format_result(word_count):
             (word, count) = word_count
-            return '%s: %d' % (word, count)
+            return '%s: %s' % (word, str(count))
 
         messages = (
             p| beam.io.ReadFromPubSub(
