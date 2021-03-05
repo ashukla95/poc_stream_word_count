@@ -1,56 +1,35 @@
-import base64
+from google.cloud import pubsub, pubsub_v1
 import datetime
+import os
 
-from apiclient import discovery
-from oauth2client.client import GoogleCredentials
-
-WORD_STREAM_TOPIC = input("Please provide a pubsub topic to continue.")
-PUBSUB_SCOPES = ['https://www.googleapis.com/auth/pubsub']
-NUM_RETRIES = 3
-FILENAME = "kinglear.txt"
-
-def create_client():
-    credentials = GoogleCredentials.get_application_default()
-    if credentials.create_scoped_required():
-        credentials = credentials.create_scoped(PUBSUB_SCOPES)
-    return discovery.build("pubsub", "v1beta2", credentials=credentials)
-
-def publish(client, pubsub_topic, data_line, msg_attributes=None):
-    """Publish to the given pubsub topic."""
-    data = base64.b64encode(data_line)
-    msg_payload = {'data': data}
-    if msg_attributes:
-        msg_payload['attributes'] = msg_attributes
-    body = {'messages': [msg_payload]}
-    resp = client.projects().topics().publish(
-        topic=pubsub_topic, body=body).execute(num_retries=NUM_RETRIES)
-    return resp
-
-def read_file():
+def read_file(file_name):
     all_lines = []
-    with open(FILENAME) as reader:
+    with open(file_name) as reader:
         for line in reader:
             all_lines.append(line)
     return all_lines
 
 def start_stream():
-    print("creating client for pubsub.")
-    client = create_client()
-    print("Reading file for streaming.")
-    file_lines = read_file()
-    print("File read complete. Length: {}".format(len(file_lines)))
-    print("publishing all the read lines.")
-    try:
-        while True:
-            for line in file_lines:
-                print("sending text to pubsub.")
-                publish(client, WORD_STREAM_TOPIC, line.encode("utf-8"), {"timestamp": str(datetime.datetime.now())})
-    except Exception as e:
-        print("Exception raised: {}".format(e))
+
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="key.json"
+    FILE_NAME = "kinglear.txt"
+    topic = input("Please provide a topic to continue: ")
+    publisher_options = pubsub_v1.types.PublisherOptions(enable_message_ordering=True)
+    pubsub_client = pubsub.PublisherClient(publisher_options=publisher_options)
+    all_text_lines = read_file(FILE_NAME)
+    while True:
+        for line in all_text_lines:
+            try:
+                print("publishing message.")
+                future = pubsub_client.publish(topic, line.encode("utf-8"), ordering_key=str(datetime.datetime.now()))
+                print("message id: {}".format(future.result()))
+            except Exception as e:
+                print("EXception is: {}".format(e))
+                continue
 
 if __name__ == "__main__":
-    print("starting the word stream.")
     start_stream()
 
 
 
+# topics = projects/playground-s-11-84d094ad/topics/word_ingest
