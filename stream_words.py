@@ -69,7 +69,7 @@ def run(argv=None, save_main_session=True):
             | 'encode' >> beam.Map(lambda x: x.encode('utf-8')).with_output_types(bytes)
         )
 
-        output | beam.io.WriteTobigQuery(
+        output | beam.io.gcp.bigquery.WriteToBigQuery(
             table=known_args.bq_table,
             schema=lambda table: (data_schema)
         )
