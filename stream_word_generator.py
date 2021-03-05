@@ -11,11 +11,14 @@ def read_file(file_name):
 
 def start_stream():
 
+    PROJECT_ID = "playground-s-11-691e528b"
+    TOPIC_ID = "word_ingest"
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="key.json"
     FILE_NAME = "kinglear.txt"
-    topic = input("Please provide a topic to continue: ")
+    # topic = input("Please provide a topic to continue: ")
     publisher_options = pubsub_v1.types.PublisherOptions(enable_message_ordering=True)
     pubsub_client = pubsub.PublisherClient(publisher_options=publisher_options)
+    topic = pubsub_client.topic_path(PROJECT_ID, TOPIC_ID)
     all_text_lines = read_file(FILE_NAME)
     while True:
         for line in all_text_lines:
