@@ -2,7 +2,6 @@ import base64
 import datetime
 
 from apiclient import discovery
-from dateutil.parser import parse
 from oauth2client.client import GoogleCredentials
 
 WORD_STREAM_TOPIC = input("Please provide a pubsub topic to continue.")
@@ -45,7 +44,7 @@ def start_stream():
         while True:
             for line in file_lines:
                 print("sending text to pubsub.")
-                publish(client, WORD_STREAM_TOPIC, line, {"timestamp": str(datetime.datetime.now())})
+                publish(client, WORD_STREAM_TOPIC, line, {"timestamp": str(datetime.datetime.now()).encode("utf-8")})
     except Exception as e:
         print("Exception raised: {}".format(e))
 
