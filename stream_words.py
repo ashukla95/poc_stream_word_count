@@ -64,7 +64,7 @@ def run(argv=None, save_main_session=True):
             | 'format' >> beam.Map(format_result)
         )
 
-        output|beam.Map(lambda x, y: {"word": x, "count_total": y})|beam.io.gcp.bigquery.WriteToBigQuery(
+        output|beam.Map(lambda x: {"word": x[0], "count_total": x[1]})|beam.io.gcp.bigquery.WriteToBigQuery(
             table="stream_word_table",
             dataset="stream_word_dataset",
             project="playground-s-11-691e528b",
