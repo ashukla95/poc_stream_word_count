@@ -62,7 +62,6 @@ def run(argv=None, save_main_session=True):
         output = (
             counts
             | 'format' >> beam.Map(format_result)
-            | 'encode' >> beam.Map(lambda x: x.encode('utf-8')).with_output_types(bytes)
         )
 
         output | beam.io.gcp.bigquery.WriteToBigQuery(
