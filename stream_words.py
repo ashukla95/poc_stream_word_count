@@ -2,6 +2,7 @@ import argparse
 import logging
 
 import apache_beam as beam
+from apache_beam.io.gcp.bigquery import BigQueryDisposition
 import apache_beam.transforms.window as window
 from apache_beam.examples.wordcount_with_metrics import WordExtractingDoFn
 from apache_beam.options.pipeline_options import PipelineOptions
@@ -64,16 +65,14 @@ def run(argv=None, save_main_session=True):
             | 'encode' >> beam.Map(lambda x: x.encode('utf-8')).with_output_types(bytes)
         )
 
-        output | beam.io.BigQuerySink(
+        output | beam.io.gcp.bigquery.WriteToBigQuery(
             table="stream_word_table",
             dataset="stream_word_dataset",
             project="playground-s-11-691e528b",
+            schema="word:string,count:string",
+            create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
+            write_disposition=BigQueryDisposition.WRITE_APPEND
         )
-
-        # output | beam.io.gcp.bigquery.WriteToBigQuery(
-        #     table=known_args.bq_table,
-        #     schema=lambda table: (data_schema)
-        # )
 
 
 if __name__ == '__main__':
