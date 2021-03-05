@@ -42,7 +42,7 @@ def run(argv=None, save_main_session=True):
 
         def format_result(word_count):
             (word, count) = word_count
-            return '%s: %s' % (word, str(count))
+            return '%s: %d' % (word, str(count))
 
         messages = (
             p| beam.io.ReadFromPubSub(
@@ -57,7 +57,8 @@ def run(argv=None, save_main_session=True):
             | 'pair_with_one' >> beam.Map(lambda x: (x, 1))
             | 'window for 15 minutes' >> beam.WindowInto(window.FixedWindows(15, 0))
             | 'group' >> beam.GroupByKey()
-            | 'count' >> beam.Map(count_ones))
+            | 'count' >> beam.Map(count_ones)
+        )
 
         output = (
             counts
@@ -68,7 +69,7 @@ def run(argv=None, save_main_session=True):
             table="stream_word_table",
             dataset="stream_word_dataset",
             project="playground-s-11-691e528b",
-            schema="word:string,count_total:string",
+            schema="word:string,count_total:numeric",
             create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
             write_disposition=BigQueryDisposition.WRITE_APPEND
         )
