@@ -5,7 +5,7 @@ from apiclient import discovery
 from dateutil.parser import parse
 from oauth2client.client import GoogleCredentials
 
-WORD_STREAM_TOPIC = "SOME-TOPIC"
+WORD_STREAM_TOPIC = input("Please provide a pubsub topic to continue.")
 PUBSUB_SCOPES = ['https://www.googleapis.com/auth/pubsub']
 NUM_RETRIES = 3
 FILENAME = "kinglear.txt"
