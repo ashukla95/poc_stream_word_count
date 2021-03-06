@@ -1,5 +1,6 @@
 import argparse
 import logging
+import re
 
 import apache_beam as beam
 from apache_beam.io.gcp.bigquery import BigQueryDisposition
@@ -36,13 +37,10 @@ def run(argv=None, save_main_session=True):
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
     pipeline_options.view_as(StandardOptions).streaming = True
     with beam.Pipeline(options=pipeline_options) as p:
-        def count_ones(word_ones):
-            (word, ones) = word_ones
-            return (word, sum(ones))
 
         def format_result(word_count):
             (word, count) = word_count
-            return '%s: %d' % (word, count)
+            return '%s: %s' % (word, count)
 
         messages = (
             p| beam.io.ReadFromPubSub(
@@ -53,26 +51,21 @@ def run(argv=None, save_main_session=True):
 
         counts = (
             lines
-            | 'split' >> (beam.ParDo(WordExtractingDoFn()))
+            | 'split' >> beam.FlatMap(lambda x: re.findall(r'[A-Za-z\']+', x)) #(beam.ParDo(WordExtractingDoFn()))
             | 'pair_with_one' >> beam.Map(lambda x: (x, 1))
-            | 'window for 15 minutes' >> beam.WindowInto(window.FixedWindows(15, 0))
-            | 'group' >> beam.GroupByKey()
-            | 'count' >> beam.Map(count_ones)
+            # | 'window for 15 minutes' >> beam.WindowInto(window.FixedWindows(15, 0))
+            | 'sum by grouping' >> beam.CombinePerKey((sum))
         )
 
-        output = (
-            counts
-            | 'format' >> beam.Map(format_result)
-        )
-
-        output|beam.Map(lambda x: {"word": x[0], "count_total": x[1]})|beam.io.gcp.bigquery.WriteToBigQuery(
-            table="stream_word_table",
-            dataset="stream_word_dataset",
-            project="playground-s-11-691e528b",
-            schema="word:string,count_total:integer",
-            create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
-            write_disposition=BigQueryDisposition.WRITE_APPEND
-        )
+        output = counts | 'format' >> beam.Map(format_result)
+        output| 'Prep for BigQuery write' >> beam.Map(lambda x: {"word": x[0], "count_total": x[1]})| 'Write to BigQuery' >> beam.io.gcp.bigquery.WriteToBigQuery(
+               table="stream_word_table",
+               dataset="stream_word_dataset",
+               project="playground-s-11-691e528b",
+               schema="word:string,count_total:integer",
+               create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
+               write_disposition=BigQueryDisposition.WRITE_APPEND
+            )
 
 
 if __name__ == '__main__':
