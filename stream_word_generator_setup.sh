@@ -13,6 +13,10 @@ cd poc_stream_word_count
 echo "activating the virtual environment"
 source stream_env/Scripts/activate
 
+echo "installing the required libraries for pubsub stream."
+pip3 install google-cloud-pubsub
+
+
 echo "getting the project ID."
 PROJECT_ID=`gcloud config get-value project`
 
