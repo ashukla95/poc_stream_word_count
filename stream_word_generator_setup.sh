@@ -1,3 +1,9 @@
+echo "creating python virtual environment."
+python3 -m venv stream_env
+
+echo "activating the virtual environment"
+source stream_env/bin/activate
+
 echo "setting topic id for the pubsub."
 TOPIC_ID="word_ingest"
 
@@ -9,9 +15,6 @@ git clone https://github.com/ashukla95/poc_stream_word_count.git
 
 echo "entering the directory"
 cd poc_stream_word_count
-
-echo "activating the virtual environment"
-source stream_env/Scripts/activate
 
 echo "installing the required libraries for pubsub stream."
 pip3 install google-cloud-pubsub

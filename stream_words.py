@@ -15,12 +15,20 @@ def run(argv=None, save_main_session=True):
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--bq_table',
-        default="playground-s-11-691e528b:stream_word_dataset.stream_word_table",
-        help=('Output to big query table.'))
+        '--project',
+        default="",
+        help=('project name.'))
+    parser.add_argument(
+        '--dataset',
+        default="",
+        help=('Big query dataset name.'))
+    parser.add_argument(
+        '--table',
+        default="",
+        help=('Big query table name.'))
     parser.add_argument(
         '--input_topic',
-        default="projects/playground-s-11-691e528b/topics/word_ingest",
+        default="",
         help=(
             'Input PubSub topic of the form '
             '"projects/<PROJECT>/topics/<TOPIC>".'))
@@ -52,9 +60,9 @@ def run(argv=None, save_main_session=True):
 
         output = counts | 'format' >> beam.Map(format_result)
         output| 'Prep for BigQuery write' >> beam.Map(lambda x: {"word": x[0], "count_total": x[1]})| 'Write to BigQuery' >> beam.io.gcp.bigquery.WriteToBigQuery(
-               table="stream_word_table",
-               dataset="stream_word_dataset",
-               project="playground-s-11-691e528b",
+               table=known_args.table,
+               dataset=known_args.dataset,
+               project=known_args.project,
                schema="word:string,count_total:integer",
                create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
                write_disposition=BigQueryDisposition.WRITE_APPEND
