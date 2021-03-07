@@ -13,13 +13,6 @@ from apache_beam.options.pipeline_options import StandardOptions
 
 def run(argv=None, save_main_session=True):
 
-    data_schema = {
-        "fields": [
-            {"name": "word", "type":"string"},
-            {"name": "count", "type": "string"}
-        ]
-    }
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--bq_table',

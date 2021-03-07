@@ -1,6 +1,7 @@
 from google.cloud import pubsub, pubsub_v1
 import datetime
 import os
+import sys
 
 def read_file(file_name):
     all_lines = []
@@ -9,10 +10,10 @@ def read_file(file_name):
             all_lines.append(line)
     return all_lines
 
-def start_stream():
+def start_stream(project_id, topic_id):
 
-    PROJECT_ID = "playground-s-11-691e528b"
-    TOPIC_ID = "word_ingest"
+    PROJECT_ID = project_id #"playground-s-11-691e528b"
+    TOPIC_ID = topic_id #"word_ingest"
     # os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="key.json"
     FILE_NAME = "kinglear.txt"
     # topic = input("Please provide a topic to continue: ")
@@ -31,8 +32,7 @@ def start_stream():
                 continue
 
 if __name__ == "__main__":
-    start_stream()
-
-
-
-# topics = projects/playground-s-11-84d094ad/topics/word_ingest
+    project_id = sys.argv[1]
+    topic_id = sys.argv[2]
+    print("project id: {}, topic id: {}".format(project_id, topic_id))
+    start_stream(project_id, topic_id)
