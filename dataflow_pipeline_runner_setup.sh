@@ -1,3 +1,6 @@
+echo "installing required dependencies for creating virtual environment."
+sudo apt install python3-venv
+
 echo "creating python virtual environment for dataflow."
 python3 -m venv dataflow_env
 
