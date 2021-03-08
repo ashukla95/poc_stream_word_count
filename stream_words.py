@@ -15,7 +15,7 @@ def run(argv=None, save_main_session=True):
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--project_known',
+        '--known_p',
         help=('project name.'))
     parser.add_argument(
         '--dataset',
@@ -29,7 +29,7 @@ def run(argv=None, save_main_session=True):
 
     known_args, pipeline_args = parser.parse_known_args()
 
-    print("known: {}, pipeline: {}".format(known_args, pipeline_args))
+    # print("known: {}, pipeline: {}".format(known_args, pipeline_args))
 
     pipeline_options = PipelineOptions(pipeline_args)
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
@@ -51,7 +51,7 @@ def run(argv=None, save_main_session=True):
             lines
             | 'split' >> beam.FlatMap(lambda x: re.findall(r'[A-Za-z\']+', x)) #(beam.ParDo(WordExtractingDoFn()))
             | 'pair_with_one' >> beam.Map(lambda x: (x, 1))
-            # | 'window for 15 minutes' >> beam.WindowInto(window.FixedWindows(15, 0))
+            | 'window for 15 minutes' >> beam.WindowInto(window.FixedWindows(15, 0))
             | 'sum by grouping' >> beam.CombinePerKey((sum))
         )
 
