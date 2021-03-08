@@ -67,4 +67,4 @@ def run(argv, save_main_session=True):
 
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
-  run(*sys.argv[1:])
+  run(["--project", "--dataset", "--table", "--input_topic"])
