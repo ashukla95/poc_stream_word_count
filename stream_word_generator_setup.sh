@@ -1,8 +1,12 @@
-echo "creating python virtual environment."
-python3 -m venv stream_env
+PWD=`pwd`
+/usr/local/bin/virtualenv --python=python3 venv
+echo $PWD
+activate () {
+    . $PWD/venv/bin/activate
+}
 
-echo "activating the virtual environment"
-source stream_env/bin/activate
+echo "activating the shell environment."
+activate
 
 echo "setting topic id for the pubsub."
 TOPIC_ID="word_ingest"
