@@ -11,30 +11,24 @@ from apache_beam.options.pipeline_options import SetupOptions
 from apache_beam.options.pipeline_options import StandardOptions
 
 
-def run(argv, save_main_session=True):
+def run(argv=None, save_main_session=True):
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--project',
-         action="store_true",
         help=('project name.'))
     parser.add_argument(
         '--dataset',
-         action="store_true",
         help=('Big query dataset name.'))
     parser.add_argument(
         '--table',
-         action="store_true",
         help=('Big query table name.'))
     parser.add_argument(
         '--input_topic',
-         action="store_true",
-        help=(
-            'Input PubSub topic of the form '
-            '"projects/<PROJECT>/topics/<TOPIC>".'))
+        help=('Input PubSub topic of the form "projects/<PROJECT>/topics/<TOPIC>".'))
 
-    # print("Hello: ", parser.parse_args())
-    known_args, pipeline_args = parser.parse_known_args(argv)
+    known_args, pipeline_args = parser.parse_known_args()
+
     print("known: {}, pipeline: {}".format(known_args, pipeline_args))
 
     pipeline_options = PipelineOptions(pipeline_args)
@@ -74,4 +68,4 @@ def run(argv, save_main_session=True):
 
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
-  run(["--project", "--dataset", "--table", "--input_topic"])
+  run()
