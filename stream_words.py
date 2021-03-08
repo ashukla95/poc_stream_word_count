@@ -15,7 +15,7 @@ def run(argv=None, save_main_session=True):
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--project',
+        '--project_known',
         help=('project name.'))
     parser.add_argument(
         '--dataset',
@@ -59,7 +59,7 @@ def run(argv=None, save_main_session=True):
         output| 'Prep for BigQuery write' >> beam.Map(lambda x: {"word": x[0], "count_total": x[1]})| 'Write to BigQuery' >> beam.io.gcp.bigquery.WriteToBigQuery(
                table=known_args.table,
                dataset=known_args.dataset,
-               project=known_args.project,
+               project=known_args.project_known,
                schema="word:string,count_total:integer",
                create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
                write_disposition=BigQueryDisposition.WRITE_APPEND

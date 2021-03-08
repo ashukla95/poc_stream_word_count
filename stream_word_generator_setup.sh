@@ -30,3 +30,17 @@ PROJECT_ID=`gcloud config get-value project`
 
 echo "starting the stream of words to cloud pubsub."
 python3 stream_word_generator.py "$PROJECT_ID" "$TOPIC_ID"
+
+
+# echo "start a dataflow pipeline"
+# python3 -m stream_words \
+# --runner DataflowRunner \
+# --region us-east1 \
+# --project "$PROJECT_ID" \
+# --project_known "$PROJECT_ID" \
+# --staging_location gs://"$PROJECT_ID"/staging \
+# --temp_location gs://"$PROJECT_ID"/temp \
+# --template_location gs://"$PROJECT_ID"/templates/stream_words \
+# --table stream_word_table \
+# --dataset test_dataset \
+# --input_topic projects/"$PROJECT_ID"/topics/word_ingest
